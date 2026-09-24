@@ -1,0 +1,15 @@
+.page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.page__header h1 {
+  margin: 0;
+}
+
+.unread {
+  background: color-mix(in srgb, var(--tp-primary) 8%, transparent);
+}

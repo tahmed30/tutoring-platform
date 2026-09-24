@@ -1,0 +1,163 @@
+{
+  "app": {
+    "name": "Tutoring Hub",
+    "tagline": "Academic support for students, parents, and teachers"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "courses": "Courses",
+    "attendance": "Attendance",
+    "gradebook": "Gradebook",
+    "assignments": "Assignments",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "payments": "Payments",
+    "adminUsers": "Users",
+    "login": "Log in",
+    "register": "Register",
+    "logout": "Log out",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "landing": {
+    "title": "Tutoring Hub",
+    "subtitle": "Track courses, attendance, grades, and payments in one place.",
+    "ctaLogin": "Sign in",
+    "ctaRegister": "Create account",
+    "featureCourses": "Course management",
+    "featureAttendance": "Attendance tracking",
+    "featureGrades": "Gradebook & assignments"
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "registerTitle": "Create your account",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone",
+    "role": "Role",
+    "submitLogin": "Sign in",
+    "submitRegister": "Register",
+    "noAccount": "Need an account?",
+    "haveAccount": "Already registered?",
+    "failed": "Authentication failed. Check your credentials."
+  },
+  "roles": {
+    "STUDENT": "Student",
+    "PARENT": "Parent",
+    "TEACHER": "Teacher",
+    "ADMIN": "Admin"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "studentTitle": "Student dashboard",
+    "parentTitle": "Parent dashboard",
+    "teacherTitle": "Teacher dashboard",
+    "adminTitle": "Admin dashboard",
+    "enrolledCourses": "Enrolled courses",
+    "schedule": "Schedule",
+    "recentGrades": "Recent grades",
+    "attendanceSummary": "Attendance summary",
+    "submitHomework": "Submit homework",
+    "children": "Children",
+    "payments": "Payments",
+    "manageCourses": "Manage courses",
+    "manageAssignments": "Assignments to grade",
+    "usersRoles": "Users & roles",
+    "reporting": "Reporting links",
+    "settings": "Settings",
+    "empty": "No data yet. Connect to the API or seed the database.",
+    "present": "Present",
+    "absent": "Absent",
+    "unreadNotifications": "Unread notifications",
+    "unreadMessages": "Unread messages"
+  },
+  "courses": {
+    "title": "Courses",
+    "filterSubject": "Subject",
+    "filterTeacher": "Teacher",
+    "filterGrade": "Grade level",
+    "filterSearch": "Search",
+    "clearFilters": "Clear filters",
+    "colTitle": "Title",
+    "colSubject": "Subject",
+    "colTeacher": "Teacher",
+    "colGradeLevel": "Grade level",
+    "colStart": "Start",
+    "colEnd": "End"
+  },
+  "attendance": {
+    "title": "Attendance",
+    "exportCsv": "Export CSV",
+    "colStudent": "Student",
+    "colDate": "Date",
+    "colStatus": "Status",
+    "colNotes": "Notes",
+    "colCourse": "Course"
+  },
+  "gradebook": {
+    "title": "Gradebook",
+    "exportCsv": "Export CSV",
+    "colStudent": "Student",
+    "colAssignment": "Assignment",
+    "colGrade": "Grade",
+    "colType": "Grade type",
+    "colDate": "Date",
+    "colCourse": "Course"
+  },
+  "assignments": {
+    "title": "Assignment submissions",
+    "colStudent": "Student",
+    "colAssignment": "Assignment",
+    "colSubmittedAt": "Submitted at",
+    "colGrade": "Grade",
+    "colFeedback": "Feedback",
+    "exportCsv": "Export CSV"
+  },
+  "messages": {
+    "title": "Messages",
+    "compose": "New message",
+    "receiverId": "Receiver user ID",
+    "body": "Message",
+    "send": "Send",
+    "empty": "No messages yet."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "You're all caught up."
+  },
+  "payments": {
+    "title": "Payments",
+    "colStudent": "Student",
+    "colAmount": "Amount",
+    "colStatus": "Status",
+    "colDate": "Date",
+    "colMethod": "Method",
+    "empty": "No payments found."
+  },
+  "admin": {
+    "usersTitle": "User management",
+    "colName": "Name",
+    "colEmail": "Email",
+    "colRole": "Role",
+    "colLanguage": "Language"
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "actions": "Actions",
+    "error": "Something went wrong",
+    "retry": "Retry"
+  },
+  "status": {
+    "PRESENT": "Present",
+    "ABSENT": "Absent",
+    "LATE": "Late",
+    "PENDING": "Pending",
+    "COMPLETED": "Completed",
+    "FAILED": "Failed"
+  }
+}

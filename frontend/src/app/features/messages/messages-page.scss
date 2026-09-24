@@ -1,0 +1,21 @@
+.page h1 {
+  margin: 0 0 1rem;
+}
+
+.compose {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--tp-border);
+  background: var(--tp-card);
+}
+
+.compose h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.full {
+  width: 100%;
+}

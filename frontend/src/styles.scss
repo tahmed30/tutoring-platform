@@ -1,0 +1,68 @@
+@use '@angular/material' as mat;
+@use 'ag-grid-community/styles/ag-grid.css';
+@use 'ag-grid-community/styles/ag-theme-alpine.css';
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: Source Sans 3,
+      density: 0,
+    )
+  );
+}
+
+:root {
+  --tp-primary: #0f766e;
+  --tp-primary-dark: #115e59;
+  --tp-ink: #0f172a;
+  --tp-muted: #475569;
+  --tp-surface: #f1f5f9;
+  --tp-card: #ffffff;
+  --tp-border: #cbd5e1;
+  --tp-nav-bg: #ffffff;
+  --mat-sys-primary: var(--tp-primary);
+  --mat-sys-on-primary: #f8fafc;
+  --mat-sys-surface: var(--tp-surface);
+  --mat-sys-on-surface: var(--tp-ink);
+}
+
+body.theme-dark {
+  --tp-primary: #2dd4bf;
+  --tp-primary-dark: #14b8a6;
+  --tp-ink: #e2e8f0;
+  --tp-muted: #94a3b8;
+  --tp-surface: #0f172a;
+  --tp-card: #1e293b;
+  --tp-border: #334155;
+  --tp-nav-bg: #111827;
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  background: var(--tp-surface);
+  color: var(--tp-ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+}
+
+.ag-theme-alpine {
+  --ag-font-family: 'Source Sans 3', system-ui, sans-serif;
+  --ag-border-color: var(--tp-border);
+  --ag-header-background-color: color-mix(in srgb, var(--tp-primary) 10%, white);
+  --ag-odd-row-background-color: color-mix(in srgb, var(--tp-surface) 70%, white);
+}

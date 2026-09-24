@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tutoring-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tutoring
+      POSTGRES_PASSWORD: tutoring
+      POSTGRES_DB: tutoring
+    ports:
+      - "5432:5432"
+    volumes:
+      - tutoring_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tutoring -d tutoring"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Optional local DynamoDB for messaging/notifications hybrid mode
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: tutoring-dynamodb
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+    profiles:
+      - hybrid
+
+volumes:
+  tutoring_pg_data:

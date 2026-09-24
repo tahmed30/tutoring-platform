@@ -1,0 +1,21 @@
+<section class="page">
+  <header class="page__header">
+    <h1>{{ 'notifications.title' | translate }}</h1>
+    <button mat-stroked-button type="button" (click)="store.markAllRead()">
+      {{ 'notifications.markAllRead' | translate }}
+    </button>
+  </header>
+
+  <mat-nav-list>
+    @for (item of store.items(); track item.id) {
+      <a mat-list-item (click)="store.markRead(item.id)" [class.unread]="!item.readStatus">
+        <mat-icon matListItemIcon>{{ item.readStatus ? 'notifications_none' : 'notifications_active' }}</mat-icon>
+        <span matListItemTitle>{{ item.type }}</span>
+        <span matListItemLine>{{ item.message }}</span>
+        <span matListItemMeta>{{ item.createdAt | date: 'short' }}</span>
+      </a>
+    } @empty {
+      <p>{{ 'notifications.empty' | translate }}</p>
+    }
+  </mat-nav-list>
+</section>

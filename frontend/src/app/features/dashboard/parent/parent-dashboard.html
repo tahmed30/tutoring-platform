@@ -1,0 +1,67 @@
+<section class="dash">
+  <header class="dash__header">
+    <h1>{{ 'dashboard.parentTitle' | translate }}</h1>
+    <p>{{ 'dashboard.welcome' | translate: { name: auth.displayName() || 'Parent' } }}</p>
+  </header>
+
+  <div class="dash__grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>family_restroom</mat-icon>
+        <mat-card-title>{{ 'dashboard.children' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (children().length) {
+          <ul>
+            @for (child of children(); track child.id) {
+              <li>{{ child.firstName }} {{ child.lastName }}</li>
+            }
+          </ul>
+        } @else {
+          <p>{{ 'dashboard.empty' | translate }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>school</mat-icon>
+        <mat-card-title>{{ 'dashboard.enrolledCourses' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ul>
+          @for (course of courses.filteredCourses().slice(0, 4); track course.id) {
+            <li>{{ course.title }}</li>
+          } @empty {
+            <li>{{ 'dashboard.empty' | translate }}</li>
+          }
+        </ul>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/courses">{{ 'nav.courses' | translate }}</a>
+        <a mat-button routerLink="/gradebook">{{ 'nav.gradebook' | translate }}</a>
+        <a mat-button routerLink="/attendance">{{ 'nav.attendance' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>payments</mat-icon>
+        <mat-card-title>{{ 'dashboard.payments' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ul>
+          @for (p of payments().slice(0, 4); track p.id) {
+            <li>{{ p.amount }} {{ p.currency }} — {{ p.status }}</li>
+          } @empty {
+            <li>{{ 'dashboard.empty' | translate }}</li>
+          }
+        </ul>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/payments">{{ 'nav.payments' | translate }}</a>
+        <a mat-button routerLink="/messages">{{ 'nav.messages' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</section>

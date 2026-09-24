@@ -1,0 +1,86 @@
+<mat-sidenav-container class="shell">
+  <mat-sidenav
+    #drawer
+    class="shell__nav"
+    [mode]="mode()"
+    [opened]="opened()"
+    [fixedInViewport]="true"
+  >
+    <div class="shell__brand">
+      <mat-icon>menu_book</mat-icon>
+      <span>{{ 'app.name' | translate }}</span>
+    </div>
+    <mat-nav-list>
+      @for (item of navItems(); track item.route) {
+        <a
+          mat-list-item
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          (click)="onNavClick()"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.labelKey | translate }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="shell__toolbar" color="primary">
+      <button mat-icon-button type="button" (click)="drawer.toggle()" aria-label="Menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="shell__title">{{ 'app.name' | translate }}</span>
+      <span class="spacer"></span>
+
+      <button
+        mat-icon-button
+        type="button"
+        [routerLink]="['/notifications']"
+        [matBadge]="notifications.unreadCount() || null"
+        matBadgeColor="accent"
+        matBadgeSize="small"
+        [attr.aria-label]="'nav.notifications' | translate"
+      >
+        <mat-icon>notifications</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        type="button"
+        [routerLink]="['/messages']"
+        [matBadge]="messages.unreadCount() || null"
+        matBadgeColor="accent"
+        matBadgeSize="small"
+        [attr.aria-label]="'nav.messages' | translate"
+      >
+        <mat-icon>mail</mat-icon>
+      </button>
+
+      <button mat-button type="button" (click)="toggleLanguage()">
+        {{ settings.language() === 'en' ? 'አማ' : 'EN' }}
+      </button>
+
+      <button mat-icon-button type="button" [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <div class="shell__user" mat-menu-item disabled>
+          {{ authStore.displayName() }}
+        </div>
+        <button mat-menu-item type="button" (click)="settings.toggleTheme()">
+          <mat-icon>contrast</mat-icon>
+          <span>{{ 'nav.theme' | translate }}</span>
+        </button>
+        <button mat-menu-item type="button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>{{ 'nav.logout' | translate }}</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <main class="shell__content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

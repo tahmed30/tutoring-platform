@@ -1,0 +1,25 @@
+<section class="page">
+  <h1>{{ 'admin.usersTitle' | translate }}</h1>
+
+  <table mat-table [dataSource]="rows()" class="mat-elevation-z1">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>{{ 'admin.colName' | translate }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.firstName }} {{ row.lastName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>{{ 'admin.colEmail' | translate }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+    </ng-container>
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef>{{ 'admin.colRole' | translate }}</th>
+      <td mat-cell *matCellDef="let row">{{ ('roles.' + row.role.name) | translate }}</td>
+    </ng-container>
+    <ng-container matColumnDef="language">
+      <th mat-header-cell *matHeaderCellDef>{{ 'admin.colLanguage' | translate }}</th>
+      <td mat-cell *matCellDef="let row">{{ row.preferredLanguage }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</section>

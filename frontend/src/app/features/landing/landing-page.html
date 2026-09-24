@@ -1,0 +1,25 @@
+<section class="landing">
+  <div class="landing__panel">
+    <p class="landing__eyebrow">{{ 'app.tagline' | translate }}</p>
+    <h1>{{ 'landing.title' | translate }}</h1>
+    <p class="landing__subtitle">{{ 'landing.subtitle' | translate }}</p>
+    <div class="landing__actions">
+      <a mat-flat-button color="primary" routerLink="/login">{{ 'landing.ctaLogin' | translate }}</a>
+      <a mat-stroked-button routerLink="/register">{{ 'landing.ctaRegister' | translate }}</a>
+    </div>
+    <ul class="landing__features">
+      <li>
+        <mat-icon>school</mat-icon>
+        {{ 'landing.featureCourses' | translate }}
+      </li>
+      <li>
+        <mat-icon>event_available</mat-icon>
+        {{ 'landing.featureAttendance' | translate }}
+      </li>
+      <li>
+        <mat-icon>grade</mat-icon>
+        {{ 'landing.featureGrades' | translate }}
+      </li>
+    </ul>
+  </div>
+</section>

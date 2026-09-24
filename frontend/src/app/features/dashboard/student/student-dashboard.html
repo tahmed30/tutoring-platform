@@ -1,0 +1,81 @@
+<section class="dash">
+  <header class="dash__header">
+    <div>
+      <h1>{{ 'dashboard.studentTitle' | translate }}</h1>
+      <p>{{ 'dashboard.welcome' | translate: { name: auth.displayName() || 'Student' } }}</p>
+    </div>
+  </header>
+
+  <div class="dash__grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>school</mat-icon>
+        <mat-card-title>{{ 'dashboard.enrolledCourses' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (courses.filteredCourses().length) {
+          <ul>
+            @for (course of courses.filteredCourses().slice(0, 4); track course.id) {
+              <li>{{ course.title }} · {{ course.subject?.name }}</li>
+            }
+          </ul>
+        } @else {
+          <p>{{ 'dashboard.empty' | translate }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/courses">{{ 'nav.courses' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>grade</mat-icon>
+        <mat-card-title>{{ 'dashboard.recentGrades' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (grades.grades().length) {
+          <ul>
+            @for (g of grades.grades().slice(0, 4); track g.id) {
+              <li>{{ g.assignment?.title || g.gradeType }} — {{ g.gradeValue }}</li>
+            }
+          </ul>
+        } @else {
+          <p>{{ 'dashboard.empty' | translate }}</p>
+        }
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/gradebook">{{ 'nav.gradebook' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>event_available</mat-icon>
+        <mat-card-title>{{ 'dashboard.attendanceSummary' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ 'dashboard.present' | translate }}: {{ attendance.presentCount() }}</p>
+        <p>{{ 'dashboard.absent' | translate }}: {{ attendance.absentCount() }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/attendance">{{ 'nav.attendance' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>assignment</mat-icon>
+        <mat-card-title>{{ 'dashboard.submitHomework' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ 'dashboard.unreadNotifications' | translate }}: {{ notifications.unreadCount() }}</p>
+        <p>{{ 'dashboard.unreadMessages' | translate }}: {{ messages.unreadCount() }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/assignments">{{ 'nav.assignments' | translate }}</a>
+        <a mat-button routerLink="/messages">{{ 'nav.messages' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</section>

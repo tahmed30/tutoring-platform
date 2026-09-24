@@ -1,0 +1,49 @@
+<section class="dash">
+  <header class="dash__header">
+    <h1>{{ 'dashboard.teacherTitle' | translate }}</h1>
+    <p>{{ 'dashboard.welcome' | translate: { name: auth.displayName() || 'Teacher' } }}</p>
+  </header>
+
+  <div class="dash__grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>school</mat-icon>
+        <mat-card-title>{{ 'dashboard.manageCourses' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ courses.filteredCourses().length }} courses</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/courses">{{ 'nav.courses' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>assignment</mat-icon>
+        <mat-card-title>{{ 'dashboard.manageAssignments' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ 'nav.assignments' | translate }} / {{ 'nav.gradebook' | translate }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/assignments">{{ 'nav.assignments' | translate }}</a>
+        <a mat-button routerLink="/gradebook">{{ 'nav.gradebook' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>event_available</mat-icon>
+        <mat-card-title>{{ 'nav.attendance' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ 'dashboard.present' | translate }}: {{ attendance.presentCount() }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/attendance">{{ 'nav.attendance' | translate }}</a>
+        <a mat-button routerLink="/messages">{{ 'nav.messages' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</section>

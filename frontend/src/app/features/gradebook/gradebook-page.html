@@ -1,0 +1,20 @@
+<section class="page">
+  <header class="page__header">
+    <h1>{{ 'gradebook.title' | translate }}</h1>
+    <button mat-stroked-button type="button" (click)="exportCsv()">
+      {{ 'gradebook.exportCsv' | translate }}
+    </button>
+  </header>
+
+  <ag-grid-angular
+    class="ag-theme-alpine grid"
+    [rowData]="store.grades()"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [paginationPageSizeSelector]="[10, 25, 50]"
+    (gridReady)="onGridReady($event)"
+    (cellValueChanged)="onCellValueChanged($event)"
+  />
+</section>

@@ -1,0 +1,30 @@
+<section class="page">
+  <h1>{{ 'messages.title' | translate }}</h1>
+
+  <form class="compose" [formGroup]="form" (ngSubmit)="send()">
+    <h2>{{ 'messages.compose' | translate }}</h2>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>{{ 'messages.receiverId' | translate }}</mat-label>
+      <input matInput formControlName="receiverId" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>{{ 'messages.body' | translate }}</mat-label>
+      <textarea matInput rows="3" formControlName="messageBody"></textarea>
+    </mat-form-field>
+    <button mat-flat-button color="primary" type="submit">{{ 'messages.send' | translate }}</button>
+  </form>
+
+  <mat-nav-list>
+    @for (msg of store.messages(); track msg.id) {
+      <a mat-list-item (click)="store.markRead(msg.id)">
+        <span matListItemTitle>
+          {{ msg.sender ? msg.sender.firstName + ' ' + msg.sender.lastName : msg.senderId }}
+        </span>
+        <span matListItemLine>{{ msg.messageBody }}</span>
+        <span matListItemMeta>{{ msg.sentAt | date: 'short' }}</span>
+      </a>
+    } @empty {
+      <p>{{ 'messages.empty' | translate }}</p>
+    }
+  </mat-nav-list>
+</section>

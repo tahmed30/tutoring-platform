@@ -1,0 +1,61 @@
+<section class="dash">
+  <header class="dash__header">
+    <h1>{{ 'dashboard.adminTitle' | translate }}</h1>
+    <p>{{ 'dashboard.welcome' | translate: { name: auth.displayName() || 'Admin' } }}</p>
+  </header>
+
+  <div class="dash__grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>manage_accounts</mat-icon>
+        <mat-card-title>{{ 'dashboard.usersRoles' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ users().length }} users</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/admin/users">{{ 'nav.adminUsers' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>school</mat-icon>
+        <mat-card-title>{{ 'nav.courses' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ courses.filteredCourses().length }} courses</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/courses">{{ 'nav.courses' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>payments</mat-icon>
+        <mat-card-title>{{ 'dashboard.payments' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ payments().length }} payments</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/payments">{{ 'nav.payments' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>insights</mat-icon>
+        <mat-card-title>{{ 'dashboard.reporting' | translate }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ 'dashboard.settings' | translate }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button routerLink="/attendance">{{ 'nav.attendance' | translate }}</a>
+        <a mat-button routerLink="/gradebook">{{ 'nav.gradebook' | translate }}</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</section>

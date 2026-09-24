@@ -1,0 +1,38 @@
+<section class="page">
+  <header class="page__header">
+    <h1>{{ 'courses.title' | translate }}</h1>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'courses.filterSubject' | translate }}</mat-label>
+      <input matInput [(ngModel)]="subject" (ngModelChange)="applyFilters()" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'courses.filterTeacher' | translate }}</mat-label>
+      <input matInput [(ngModel)]="teacher" (ngModelChange)="applyFilters()" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'courses.filterGrade' | translate }}</mat-label>
+      <input matInput [(ngModel)]="gradeLevel" (ngModelChange)="applyFilters()" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'courses.filterSearch' | translate }}</mat-label>
+      <input matInput [(ngModel)]="search" (ngModelChange)="applyFilters()" />
+    </mat-form-field>
+    <button mat-stroked-button type="button" (click)="clearFilters()">
+      {{ 'courses.clearFilters' | translate }}
+    </button>
+  </div>
+
+  <ag-grid-angular
+    class="ag-theme-alpine grid"
+    [rowData]="store.filteredCourses()"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [paginationPageSizeSelector]="[10, 25, 50]"
+    (gridReady)="onGridReady($event)"
+  />
+</section>

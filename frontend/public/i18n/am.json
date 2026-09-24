@@ -1,0 +1,163 @@
+{
+  "app": {
+    "name": "የማጠናከሪያ ማዕከል",
+    "tagline": "ለተማሪዎች፣ ወላጆች እና መምህራን የትምህርት ድጋፍ"
+  },
+  "nav": {
+    "dashboard": "ዳሽቦርድ",
+    "courses": "ኮርሶች",
+    "attendance": "አቴንዳንስ",
+    "gradebook": "የውጤት መዝገብ",
+    "assignments": "ስራዎች",
+    "messages": "መልዕክቶች",
+    "notifications": "ማሳወቂያዎች",
+    "payments": "ክፍያዎች",
+    "adminUsers": "ተጠቃሚዎች",
+    "login": "ግባ",
+    "register": "ተመዝገብ",
+    "logout": "ውጣ",
+    "language": "ቋንቋ",
+    "theme": "ገጽታ"
+  },
+  "landing": {
+    "title": "የማጠናከሪያ ማዕከል",
+    "subtitle": "ኮርሶችን፣ አቴንዳንስን፣ ውጤቶችን እና ክፍያዎችን በአንድ ቦታ ይከታተሉ።",
+    "ctaLogin": "ግባ",
+    "ctaRegister": "መለያ ፍጠር",
+    "featureCourses": "የኮርስ አስተዳደር",
+    "featureAttendance": "የአቴንዳንስ ክትትል",
+    "featureGrades": "ውጤት እና ስራዎች"
+  },
+  "auth": {
+    "loginTitle": "እንኳን ደህና መጡ",
+    "registerTitle": "መለያዎን ይፍጠሩ",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል",
+    "firstName": "ስም",
+    "lastName": "የአባት ስም",
+    "phone": "ስልክ",
+    "role": "ሚና",
+    "submitLogin": "ግባ",
+    "submitRegister": "ተመዝገብ",
+    "noAccount": "መለያ የለዎትም?",
+    "haveAccount": "አስቀድመው ተመዝግበዋል?",
+    "failed": "ማረጋገጥ አልተሳካም። መረጃዎን ይመልከቱ።"
+  },
+  "roles": {
+    "STUDENT": "ተማሪ",
+    "PARENT": "ወላጅ",
+    "TEACHER": "መምህር",
+    "ADMIN": "አስተዳዳሪ"
+  },
+  "dashboard": {
+    "welcome": "እንኳን ደህና መጡ፣ {{name}}",
+    "studentTitle": "የተማሪ ዳሽቦርድ",
+    "parentTitle": "የወላጅ ዳሽቦርድ",
+    "teacherTitle": "የመምህር ዳሽቦርድ",
+    "adminTitle": "የአስተዳዳሪ ዳሽቦርድ",
+    "enrolledCourses": "የተመዘገቡ ኮርሶች",
+    "schedule": "መርሐግብር",
+    "recentGrades": "የቅርብ ጊዜ ውጤቶች",
+    "attendanceSummary": "የአቴንዳንስ ማጠቃለያ",
+    "submitHomework": "የቤት ስራ አስገባ",
+    "children": "ልጆች",
+    "payments": "ክፍያዎች",
+    "manageCourses": "ኮርሶችን አስተዳድር",
+    "manageAssignments": "ለመገምገም ስራዎች",
+    "usersRoles": "ተጠቃሚዎች እና ሚናዎች",
+    "reporting": "ሪፖርቶች",
+    "settings": "ቅንብሮች",
+    "empty": "መረጃ የለም። ኤፒአይን ያገናኙ ወይም ዳታቤዝ ይሙሉ።",
+    "present": "ተገኝቷል",
+    "absent": "ቀርቷል",
+    "unreadNotifications": "ያልተነበቡ ማሳወቂያዎች",
+    "unreadMessages": "ያልተነበቡ መልዕክቶች"
+  },
+  "courses": {
+    "title": "ኮርሶች",
+    "filterSubject": "ትምህርት",
+    "filterTeacher": "መምህር",
+    "filterGrade": "ደረጃ",
+    "filterSearch": "ፈልግ",
+    "clearFilters": "ማጣሪያ አጽዳ",
+    "colTitle": "ርዕስ",
+    "colSubject": "ትምህርት",
+    "colTeacher": "መምህር",
+    "colGradeLevel": "ደረጃ",
+    "colStart": "መጀመሪያ",
+    "colEnd": "መጨረሻ"
+  },
+  "attendance": {
+    "title": "አቴንዳንስ",
+    "exportCsv": "CSV ላክ",
+    "colStudent": "ተማሪ",
+    "colDate": "ቀን",
+    "colStatus": "ሁኔታ",
+    "colNotes": "ማስታወሻ",
+    "colCourse": "ኮርስ"
+  },
+  "gradebook": {
+    "title": "የውጤት መዝገብ",
+    "exportCsv": "CSV ላክ",
+    "colStudent": "ተማሪ",
+    "colAssignment": "ስራ",
+    "colGrade": "ውጤት",
+    "colType": "ዓይነት",
+    "colDate": "ቀን",
+    "colCourse": "ኮርስ"
+  },
+  "assignments": {
+    "title": "የስራ ማስረከቦች",
+    "colStudent": "ተማሪ",
+    "colAssignment": "ስራ",
+    "colSubmittedAt": "የቀረበበት ጊዜ",
+    "colGrade": "ውጤት",
+    "colFeedback": "አስተያየት",
+    "exportCsv": "CSV ላክ"
+  },
+  "messages": {
+    "title": "መልዕክቶች",
+    "compose": "አዲስ መልዕክት",
+    "receiverId": "የተቀባይ መለያ",
+    "body": "መልዕክት",
+    "send": "ላክ",
+    "empty": "መልዕክት የለም።"
+  },
+  "notifications": {
+    "title": "ማሳወቂያዎች",
+    "markAllRead": "ሁሉንም እንደተነበበ ምልክት አድርግ",
+    "empty": "ሁሉም ተነብቧል።"
+  },
+  "payments": {
+    "title": "ክፍያዎች",
+    "colStudent": "ተማሪ",
+    "colAmount": "መጠን",
+    "colStatus": "ሁኔታ",
+    "colDate": "ቀን",
+    "colMethod": "ዘዴ",
+    "empty": "ክፍያ አልተገኘም።"
+  },
+  "admin": {
+    "usersTitle": "የተጠቃሚ አስተዳደር",
+    "colName": "ስም",
+    "colEmail": "ኢሜይል",
+    "colRole": "ሚና",
+    "colLanguage": "ቋንቋ"
+  },
+  "common": {
+    "loading": "በመጫን ላይ…",
+    "save": "አስቀምጥ",
+    "cancel": "ሰርዝ",
+    "actions": "እርምጃዎች",
+    "error": "ስህተት ተከስቷል",
+    "retry": "እንደገና ሞክር"
+  },
+  "status": {
+    "PRESENT": "ተገኝቷል",
+    "ABSENT": "ቀርቷል",
+    "LATE": "ዘግይቷል",
+    "PENDING": "በመጠባበቅ ላይ",
+    "COMPLETED": "ተጠናቋል",
+    "FAILED": "አልተሳካም"
+  }
+}

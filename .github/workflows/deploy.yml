@@ -1,0 +1,126 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options:
+          - staging
+          - prod
+        default: staging
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.event.inputs.environment || 'staging' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Deploy staging
+    if: >
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+            infra/package-lock.json
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Install infra
+        working-directory: infra
+        run: npm ci
+
+      - name: Build backend image context / CDK deploy
+        working-directory: infra
+        run: npx cdk deploy --all -c env=staging --require-approval never
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID_STAGING }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Sync frontend to S3 + invalidate CloudFront
+        env:
+          FRONTEND_BUCKET: ${{ secrets.FRONTEND_BUCKET_STAGING }}
+          CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID_STAGING }}
+        run: |
+          aws s3 sync frontend/dist/ s3://$FRONTEND_BUCKET/ --delete
+          if [ -n "$CF_DISTRIBUTION_ID" ]; then
+            aws cloudfront create-invalidation --distribution-id "$CF_DISTRIBUTION_ID" --paths "/*"
+          fi
+
+  deploy-prod:
+    name: Deploy production
+    if: github.event_name == 'workflow_dispatch' && inputs.environment == 'prod'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.22.3'
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+            infra/package-lock.json
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_PROD }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Install infra
+        working-directory: infra
+        run: npm ci
+
+      - name: CDK deploy production
+        working-directory: infra
+        run: npx cdk deploy --all -c env=prod --require-approval broadening
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Sync frontend to S3 + invalidate CloudFront
+        env:
+          FRONTEND_BUCKET: ${{ secrets.FRONTEND_BUCKET_PROD }}
+          CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID_PROD }}
+        run: |
+          aws s3 sync frontend/dist/ s3://$FRONTEND_BUCKET/ --delete
+          if [ -n "$CF_DISTRIBUTION_ID" ]; then
+            aws cloudfront create-invalidation --distribution-id "$CF_DISTRIBUTION_ID" --paths "/*"
+          fi
