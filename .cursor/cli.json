@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**/*)",
+      "Write(backend/**/*)",
+      "Write(frontend/**/*)",
+      "Write(infra/**/*)",
+      "Write(docs/**/*)",
+      "Write(.github/**/*)",
+      "Shell(ls)",
+      "Shell(cat)",
+      "Shell(head)",
+      "Shell(tail)",
+      "Shell(grep)",
+      "Shell(find)",
+      "Shell(rg)",
+      "Shell(npm)",
+      "Shell(npx)",
+      "Shell(node)",
+      "Shell(aws)",
+      "Shell(jq)",
+      "Shell(gh)",
+      "WebFetch(*.github.com)",
+      "WebFetch(docs.github.com)",
+      "WebFetch(cursor.com)"
+    ],
+    "deny": [
+      "Shell(rm)",
+      "Shell(git)",
+      "Shell(sudo)",
+      "Shell(docker)",
+      "Write(**/.env*)",
+      "Write(**/*.pem)",
+      "Write(**/*.key)",
+      "Write(**/credentials*)",
+      "Write(package.json)",
+      "Write(**/package-lock.json)",
+      "Read(**/.env)",
+      "Read(**/.env.*)"
+    ]
+  }
+}

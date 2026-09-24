@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../state/auth.store';
 import { CoursesStore } from '../../../state/courses.store';
 import { UsersApiService } from '../../../core/api/users-api.service';
@@ -14,7 +14,7 @@ import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslateModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslatePipe],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.scss',
 })

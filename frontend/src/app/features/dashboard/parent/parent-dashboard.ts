@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../state/auth.store';
 import { CoursesStore } from '../../../state/courses.store';
 import { GradebookStore } from '../../../state/gradebook.store';
@@ -24,7 +24,7 @@ import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-parent-dashboard',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslateModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslatePipe],
   templateUrl: './parent-dashboard.html',
   styleUrl: './parent-dashboard.scss',
 })

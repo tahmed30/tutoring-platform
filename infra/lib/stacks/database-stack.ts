@@ -9,11 +9,13 @@ export interface DatabaseStackProps extends cdk.StackProps {
   config: EnvironmentConfig;
   vpc: ec2.IVpc;
   databaseSecurityGroup: ec2.ISecurityGroup;
-  dbCredentials: secretsmanager.ISecret;
 }
 
 /**
  * Default: Aurora PostgreSQL Serverless v2.
+ *
+ * DB credentials are created in this stack (Secrets Manager) so Aurora can
+ * attach host/port fields without a cross-stack cycle.
  *
  * Cheaper alternative (documented, not provisioned by default):
  * - RDS PostgreSQL burstable (db.t4g.micro / db.t4g.small) with
@@ -24,11 +26,12 @@ export interface DatabaseStackProps extends cdk.StackProps {
 export class DatabaseStack extends cdk.Stack {
   public readonly cluster: rds.DatabaseCluster;
   public readonly clusterEndpoint: string;
+  public readonly dbCredentials: secretsmanager.ISecret;
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
 
-    const { config, vpc, databaseSecurityGroup, dbCredentials } = props;
+    const { config, vpc, databaseSecurityGroup } = props;
     const prefix = `tutoring-${config.envName}`;
     const removal = config.retainData
       ? cdk.RemovalPolicy.RETAIN
@@ -50,7 +53,7 @@ export class DatabaseStack extends cdk.Stack {
      *   vpc,
      *   vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
      *   securityGroups: [databaseSecurityGroup],
-     *   credentials: rds.Credentials.fromSecret(dbCredentials),
+     *   credentials: rds.Credentials.fromGeneratedSecret('tutoring'),
      *   databaseName: 'tutoring',
      *   multiAz: config.multiAz,
      *   allocatedStorage: 20,
@@ -66,7 +69,9 @@ export class DatabaseStack extends cdk.Stack {
       engine: rds.DatabaseClusterEngine.auroraPostgres({
         version: rds.AuroraPostgresEngineVersion.VER_16_4,
       }),
-      credentials: rds.Credentials.fromSecret(dbCredentials),
+      credentials: rds.Credentials.fromGeneratedSecret('tutoring', {
+        secretName: `tutoring/${config.envName}/db/credentials`,
+      }),
       defaultDatabaseName: 'tutoring',
       writer: rds.ClusterInstance.serverlessV2('Writer', {
         publiclyAccessible: false,
@@ -94,11 +99,15 @@ export class DatabaseStack extends cdk.Stack {
       clusterIdentifier: `${prefix}-aurora-pg`,
     });
 
+    this.dbCredentials = this.cluster.secret!;
     this.clusterEndpoint = this.cluster.clusterEndpoint.hostname;
 
     new cdk.CfnOutput(this, 'ClusterEndpoint', {
       value: this.clusterEndpoint,
     });
     new cdk.CfnOutput(this, 'DatabaseName', { value: 'tutoring' });
+    new cdk.CfnOutput(this, 'DbSecretArn', {
+      value: this.dbCredentials.secretArn,
+    });
   }
 }

@@ -8,12 +8,14 @@ export interface SecretsStackProps extends cdk.StackProps {
 }
 
 /**
- * Secrets Manager for DB credentials and NestJS JWT secrets.
- * Prefer Secrets Manager for rotating credentials; SSM Parameter Store
- * (SecureString) is a cheaper alternative for non-rotating JWT secrets.
+ * Secrets Manager for NestJS JWT secrets.
+ * DB credentials live in DatabaseStack (same stack as Aurora) to avoid
+ * the Secrets Manager ↔ RDS attachment dependency cycle across stacks.
+ *
+ * SSM Parameter Store (SecureString) is a cheaper alternative for
+ * non-rotating JWT secrets.
  */
 export class SecretsStack extends cdk.Stack {
-  public readonly dbCredentials: secretsmanager.ISecret;
   public readonly jwtSecret: secretsmanager.ISecret;
   public readonly jwtRefreshSecret: secretsmanager.ISecret;
 
@@ -25,18 +27,6 @@ export class SecretsStack extends cdk.Stack {
     const removal = config.retainData
       ? cdk.RemovalPolicy.RETAIN
       : cdk.RemovalPolicy.DESTROY;
-
-    this.dbCredentials = new secretsmanager.Secret(this, 'DbCredentials', {
-      secretName: `${prefix}/db/credentials`,
-      description: 'Aurora/RDS master credentials for tutoring platform',
-      generateSecretString: {
-        secretStringTemplate: JSON.stringify({ username: 'tutoring' }),
-        generateStringKey: 'password',
-        excludePunctuation: true,
-        passwordLength: 32,
-      },
-      removalPolicy: removal,
-    });
 
     this.jwtSecret = new secretsmanager.Secret(this, 'JwtSecret', {
       secretName: `${prefix}/jwt/access`,
@@ -58,9 +48,6 @@ export class SecretsStack extends cdk.Stack {
       removalPolicy: removal,
     });
 
-    new cdk.CfnOutput(this, 'DbSecretArn', {
-      value: this.dbCredentials.secretArn,
-    });
     new cdk.CfnOutput(this, 'JwtSecretArn', {
       value: this.jwtSecret.secretArn,
     });

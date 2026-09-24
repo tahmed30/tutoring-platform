@@ -54,7 +54,7 @@ export class ComputeStack extends cdk.Stack {
     this.cluster = new ecs.Cluster(this, 'Cluster', {
       vpc,
       clusterName: `${prefix}-cluster`,
-      containerInsights: true,
+      containerInsightsV2: ecs.ContainerInsights.ENABLED,
     });
 
     const taskRole = new iam.Role(this, 'ApiTaskRole', {

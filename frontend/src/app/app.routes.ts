@@ -27,7 +27,14 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         children: [
-          { path: '', pathMatch: 'full', redirectTo: 'student' },
+          {
+            path: '',
+            pathMatch: 'full',
+            loadComponent: () =>
+              import('./features/dashboard/dashboard-redirect').then(
+                (m) => m.DashboardRedirectComponent,
+              ),
+          },
           {
             path: 'student',
             canActivate: [roleGuard],

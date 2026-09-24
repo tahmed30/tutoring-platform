@@ -27,7 +27,7 @@ export class TransformInterceptor<T>
           'data' in (data as object) &&
           'meta' in (data as object)
         ) {
-          return data as ApiResponse<T>;
+          return data as unknown as ApiResponse<T>;
         }
         return { data };
       }),

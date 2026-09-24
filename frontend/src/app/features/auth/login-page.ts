@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/auth.service';
 import { AuthStore } from '../../state/auth.store';
 
@@ -18,7 +18,7 @@ import { AuthStore } from '../../state/auth.store';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',

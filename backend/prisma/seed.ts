@@ -34,7 +34,7 @@ async function upsertUser(params: {
   });
 }
 
-async main() {
+async function main() {
   const roleNames = [
     RoleName.STUDENT,
     RoleName.PARENT,

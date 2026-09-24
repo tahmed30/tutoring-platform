@@ -111,8 +111,6 @@ export class StorageStack extends cdk.Stack {
           ttl: cdk.Duration.minutes(5),
         },
       ],
-      minimumProtocolVersion:
-        cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
     });
 
     this.distributionDomain = this.distribution.distributionDomainName;

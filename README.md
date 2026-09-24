@@ -90,7 +90,8 @@ Details: [infra/README.md](infra/README.md).
 
 | Name | Used by | Purpose |
 |------|---------|---------|
-| `AWS_ROLE_ARN_STAGING` | deploy.yml | OIDC role for staging |
+| `CURSOR_API_KEY` | cursor-*.yml | Cursor CLI / agent in CI ([dashboard](https://cursor.com/dashboard/integrations)) |
+| `AWS_ROLE_ARN_STAGING` | deploy.yml, cursor-aws-diagnose.yml | OIDC role for staging |
 | `AWS_ROLE_ARN_PROD` | deploy.yml | OIDC role for production |
 | `AWS_ACCOUNT_ID_STAGING` | deploy.yml | CDK account |
 | `AWS_ACCOUNT_ID_PROD` | deploy.yml | CDK account |
@@ -101,6 +102,24 @@ Details: [infra/README.md](infra/README.md).
 | `AWS_REGION` (repo var) | deploy.yml | Default `us-east-1` |
 
 Trust GitHub OIDC (`token.actions.githubusercontent.com`) on the IAM roles. CI runs lint/test/build on PR/push; staging deploys on push to `main`; prod is manual.
+
+### Cursor CLI + GitHub Actions + AWS
+
+Pipeline uses the [Cursor CLI in GitHub Actions](https://cursor.com/docs/cli/github-actions) pattern with **restricted autonomy** (agent edits/analyzes; git/AWS mutations stay in deterministic steps):
+
+| Workflow | Trigger | What it does |
+|----------|---------|--------------|
+| `ci.yml` | PR / push | Lint, test, build, CDK synth |
+| `deploy.yml` | `main` / manual | CDK deploy + S3/CloudFront via AWS OIDC |
+| `cursor-ci-fix.yml` | CI **failure** on a PR | Installs Cursor CLI, applies minimal code fixes, pushes `cursor/ci-fix-*` branch, comments on the PR |
+| `cursor-aws-diagnose.yml` | Deploy **failure** | OIDC into AWS (read context), Cursor agent writes `docs/ops/last-deploy-diagnosis.md`, uploads artifact + opens an issue |
+
+Project permissions: [`.cursor/cli.json`](.cursor/cli.json) (denies `git` / secret writes; allows `aws` read-style use in diagnose).
+
+```bash
+# After the GitHub repo exists:
+gh secret set CURSOR_API_KEY --repo tahmed30/tutoring-platform --body "$CURSOR_API_KEY"
+```
 
 ## Cheaper AWS DB options
 
@@ -119,7 +138,8 @@ frontend/     Angular SPA
 backend/      NestJS + Prisma
 infra/        AWS CDK (TypeScript) + terraform outline
 docs/         Architecture + API
-.github/      ci.yml + deploy.yml
+.github/      ci.yml, deploy.yml, cursor-ci-fix.yml, cursor-aws-diagnose.yml
+.cursor/      cli.json (CI agent permissions)
 ```
 
 ## License

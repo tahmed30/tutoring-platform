@@ -9,8 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { PreferredLanguage, RoleName } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'crypto';
-import { AuditLogHelper } from '../../common/helpers/audit-log.helper';
-import { PrismaService } from '../../prisma/prisma.service';
+import { AuditLogHelper } from '../common/helpers/audit-log.helper';
+import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
@@ -164,9 +164,10 @@ export class AuthService {
 
   private async issueTokens(userId: string, email: string, role: RoleName) {
     const payload = { sub: userId, email, role };
+    const expiresIn = this.config.get<string>('JWT_EXPIRES_IN', '15m');
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.config.getOrThrow<string>('JWT_SECRET'),
-      expiresIn: this.config.get<string>('JWT_EXPIRES_IN', '15m'),
+      expiresIn: expiresIn as `${number}m`,
     });
 
     const rawRefresh = randomBytes(48).toString('hex');
@@ -185,7 +186,7 @@ export class AuthService {
     return {
       accessToken,
       refreshToken: rawRefresh,
-      expiresIn: this.config.get<string>('JWT_EXPIRES_IN', '15m'),
+      expiresIn,
     };
   }
 

@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../core/auth/auth.service';
 import { AuthStore } from '../../state/auth.store';
 import { RoleName } from '../../core/models';
@@ -21,7 +21,7 @@ import { RoleName } from '../../core/models';
     MatInputModule,
     MatSelectModule,
     MatProgressSpinnerModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './register-page.html',
   styleUrl: './register-page.scss',

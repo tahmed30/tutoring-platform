@@ -1,0 +1,111 @@
+# Diagnose AWS deploy failures with Cursor CLI (read-focused).
+# Uses the same OIDC AWS role as Deploy; agent must not mutate cloud resources.
+# Docs: https://cursor.com/docs/cli/github-actions
+name: Cursor AWS Diagnose
+
+on:
+  workflow_run:
+    workflows: [Deploy]
+    types: [completed]
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: cursor-aws-diagnose-${{ github.event.workflow_run.id }}
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    name: Cursor + AWS diagnose
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Install Cursor CLI
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Collect deploy + AWS context
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+        run: |
+          mkdir -p /tmp/aws-diag
+          gh run view "${{ github.event.workflow_run.id }}" --log-failed \
+            > /tmp/aws-diag/deploy-failed.log 2>&1 || true
+          head -c 150000 /tmp/aws-diag/deploy-failed.log > /tmp/aws-diag/deploy-truncated.log
+          {
+            echo "=== sts ==="
+            aws sts get-caller-identity || true
+            echo "=== ecs clusters ==="
+            aws ecs list-clusters --max-items 20 || true
+            echo "=== cloudformation stacks (tutoring) ==="
+            aws cloudformation list-stacks \
+              --stack-status-filter CREATE_FAILED UPDATE_FAILED ROLLBACK_COMPLETE UPDATE_ROLLBACK_COMPLETE \
+              --query "StackSummaries[?contains(StackName, 'Tutoring')].[StackName,StackStatus,LastUpdatedTime]" \
+              --output table || true
+          } > /tmp/aws-diag/aws-snapshot.txt 2>&1
+
+      - name: Run Cursor Agent diagnosis
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          if [ -z "$CURSOR_API_KEY" ]; then
+            echo "CURSOR_API_KEY secret is not set."
+            exit 1
+          fi
+          agent -p --force --model composer-2.5 --output-format text \
+            "Diagnose a failed AWS deploy for the tutoring-platform (CDK + ECS Fargate + Aurora + S3/CloudFront).
+
+            IMPORTANT:
+            - Do NOT change AWS resources (no cdk deploy, no aws delete/update/create that mutates).
+            - You may use read-only aws CLI commands if needed.
+            - Do NOT git commit/push.
+            - Write a clear incident report to docs/ops/last-deploy-diagnosis.md (create docs/ops if needed).
+            - Include likely root cause, evidence from logs, and concrete next steps for a human.
+
+            Deploy run: ${{ github.event.workflow_run.html_url }}
+            Truncated deploy logs: /tmp/aws-diag/deploy-truncated.log
+            AWS snapshot: /tmp/aws-diag/aws-snapshot.txt
+            Infra lives under infra/ (CDK). Backend Dockerfile is backend/Dockerfile."
+
+      - name: Upload diagnosis artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cursor-aws-diagnosis-${{ github.event.workflow_run.run_id }}
+          path: |
+            docs/ops/last-deploy-diagnosis.md
+            /tmp/aws-diag/**
+          if-no-files-found: warn
+
+      - name: Open issue with diagnosis
+        if: hashFiles('docs/ops/last-deploy-diagnosis.md') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY=$(cat docs/ops/last-deploy-diagnosis.md)
+          gh issue create \
+            --title "Deploy failure diagnosis (run ${{ github.event.workflow_run.run_id }})" \
+            --body "$(cat <<EOF
+          Automated diagnosis from **Cursor CLI + AWS** after [Deploy #${{ github.event.workflow_run.run_id }}](${{ github.event.workflow_run.html_url }}) failed.
+
+          $BODY
+          EOF
+          )" || true

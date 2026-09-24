@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [RouterLink, MatButtonModule, MatIconModule, TranslateModule],
+  imports: [RouterLink, MatButtonModule, MatIconModule, TranslatePipe],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.scss',
 })

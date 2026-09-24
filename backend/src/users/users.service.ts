@@ -81,7 +81,7 @@ export class UsersService {
     if (actor && actor.role !== RoleName.ADMIN && actor.id !== id) {
       if (user.role.name === RoleName.STUDENT) {
         await this.access.assertCanAccessStudent(actor, id);
-      } else if (actor.role !== RoleName.ADMIN) {
+      } else {
         throw new ForbiddenException('Not allowed to view this user');
       }
     }

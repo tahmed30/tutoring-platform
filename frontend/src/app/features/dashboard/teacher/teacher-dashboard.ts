@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthStore } from '../../../state/auth.store';
 import { CoursesStore } from '../../../state/courses.store';
 import { AttendanceStore } from '../../../state/attendance.store';
@@ -13,7 +13,7 @@ import { DEMO_ATTENDANCE, DEMO_COURSES, DEMO_GRADES, DEMO_MESSAGES } from '../..
 
 @Component({
   selector: 'app-teacher-dashboard',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslateModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslatePipe],
   templateUrl: './teacher-dashboard.html',
   styleUrl: './teacher-dashboard.scss',
 })

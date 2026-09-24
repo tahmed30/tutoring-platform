@@ -3,13 +3,13 @@ import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NotificationsStore } from '../../state/notifications.store';
 import { DEMO_NOTIFICATIONS } from '../../core/demo-data';
 
 @Component({
   selector: 'app-notifications-page',
-  imports: [DatePipe, MatButtonModule, MatListModule, MatIconModule, TranslateModule],
+  imports: [DatePipe, MatButtonModule, MatListModule, MatIconModule, TranslatePipe],
   templateUrl: './notifications-page.html',
   styleUrl: './notifications-page.scss',
 })

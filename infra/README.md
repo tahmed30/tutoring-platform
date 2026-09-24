@@ -56,14 +56,14 @@ Prefer Fargate until traffic is spiky and mostly request/response.
 
 ## Secrets
 
-| Secret | Path pattern |
-|--------|----------------|
-| DB credentials | `tutoring/{env}/db/credentials` |
-| JWT access | `tutoring/{env}/jwt/access` |
-| JWT refresh | `tutoring/{env}/jwt/refresh` |
+| Secret | Path pattern | Stack |
+|--------|----------------|-------|
+| DB credentials | `tutoring/{env}/db/credentials` | Database (attached to Aurora) |
+| JWT access | `tutoring/{env}/jwt/access` | Secrets |
+| JWT refresh | `tutoring/{env}/jwt/refresh` | Secrets |
 
 SSM Parameter Store (`SecureString`) is a cheaper option for non-rotating JWT secrets;
-Secrets Manager is used here for rotation-ready DB credentials.
+Secrets Manager is used here for rotation-ready credentials.
 
 ## Terraform
 

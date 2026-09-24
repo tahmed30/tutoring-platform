@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { AuthService } from '../core/auth/auth.service';
 import { AuthStore } from '../state/auth.store';
@@ -31,7 +31,7 @@ interface NavItem {
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    TranslateModule,
+    TranslatePipe,
     MatSidenavModule,
     MatToolbarModule,
     MatListModule,

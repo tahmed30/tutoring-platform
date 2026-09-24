@@ -43,20 +43,18 @@ applyTags(network);
 const secrets = new SecretsStack(app, `TutoringSecrets-${config.envName}`, {
   env,
   config,
-  description: `DB + JWT secrets (${config.envName})`,
+  description: `JWT secrets (${config.envName}); DB secret is in Database stack`,
 });
 applyTags(secrets);
 
+// Cross-stack refs (vpc, secrets, buckets, …) establish deploy order automatically.
 const database = new DatabaseStack(app, `TutoringDatabase-${config.envName}`, {
   env,
   config,
   vpc: network.vpc,
   databaseSecurityGroup: network.databaseSecurityGroup,
-  dbCredentials: secrets.dbCredentials,
   description: `Aurora Serverless v2 PostgreSQL (${config.envName})`,
 });
-database.addDependency(network);
-database.addDependency(secrets);
 applyTags(database);
 
 const storage = new StorageStack(app, `TutoringStorage-${config.envName}`, {
@@ -83,7 +81,7 @@ const compute = new ComputeStack(app, `TutoringCompute-${config.envName}`, {
   vpc: network.vpc,
   albSecurityGroup: network.albSecurityGroup,
   apiSecurityGroup: network.apiSecurityGroup,
-  dbCredentials: secrets.dbCredentials,
+  dbCredentials: database.dbCredentials,
   jwtSecret: secrets.jwtSecret,
   jwtRefreshSecret: secrets.jwtRefreshSecret,
   dbHost: database.clusterEndpoint,
@@ -93,11 +91,6 @@ const compute = new ComputeStack(app, `TutoringCompute-${config.envName}`, {
   buildContainerImage: !skipDocker,
   description: `ECS Fargate API + ALB (${config.envName})`,
 });
-compute.addDependency(network);
-compute.addDependency(secrets);
-compute.addDependency(database);
-compute.addDependency(storage);
-compute.addDependency(messaging);
 applyTags(compute);
 
 const auth = new AuthStack(app, `TutoringAuth-${config.envName}`, {

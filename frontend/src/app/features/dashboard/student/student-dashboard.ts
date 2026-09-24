@@ -3,24 +3,24 @@ import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
-import { AuthStore } from '../../state/auth.store';
-import { CoursesStore } from '../../state/courses.store';
-import { AttendanceStore } from '../../state/attendance.store';
-import { GradebookStore } from '../../state/gradebook.store';
-import { NotificationsStore } from '../../state/notifications.store';
-import { MessagesStore } from '../../state/messages.store';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AuthStore } from '../../../state/auth.store';
+import { CoursesStore } from '../../../state/courses.store';
+import { AttendanceStore } from '../../../state/attendance.store';
+import { GradebookStore } from '../../../state/gradebook.store';
+import { NotificationsStore } from '../../../state/notifications.store';
+import { MessagesStore } from '../../../state/messages.store';
 import {
   DEMO_ATTENDANCE,
   DEMO_COURSES,
   DEMO_GRADES,
   DEMO_MESSAGES,
   DEMO_NOTIFICATIONS,
-} from '../../core/demo-data';
+} from '../../../core/demo-data';
 
 @Component({
   selector: 'app-student-dashboard',
-  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslateModule],
+  imports: [RouterLink, MatButtonModule, MatCardModule, MatIconModule, TranslatePipe],
   templateUrl: './student-dashboard.html',
   styleUrl: './student-dashboard.scss',
 })

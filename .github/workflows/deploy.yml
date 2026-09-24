@@ -70,7 +70,7 @@ jobs:
           FRONTEND_BUCKET: ${{ secrets.FRONTEND_BUCKET_STAGING }}
           CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID_STAGING }}
         run: |
-          aws s3 sync frontend/dist/ s3://$FRONTEND_BUCKET/ --delete
+          aws s3 sync frontend/dist/web/browser/ s3://$FRONTEND_BUCKET/ --delete
           if [ -n "$CF_DISTRIBUTION_ID" ]; then
             aws cloudfront create-invalidation --distribution-id "$CF_DISTRIBUTION_ID" --paths "/*"
           fi
@@ -120,7 +120,7 @@ jobs:
           FRONTEND_BUCKET: ${{ secrets.FRONTEND_BUCKET_PROD }}
           CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID_PROD }}
         run: |
-          aws s3 sync frontend/dist/ s3://$FRONTEND_BUCKET/ --delete
+          aws s3 sync frontend/dist/web/browser/ s3://$FRONTEND_BUCKET/ --delete
           if [ -n "$CF_DISTRIBUTION_ID" ]; then
             aws cloudfront create-invalidation --distribution-id "$CF_DISTRIBUTION_ID" --paths "/*"
           fi

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   AllCommunityModule,
@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-assignments-page',
-  imports: [MatButtonModule, TranslateModule, AgGridAngular],
+  imports: [MatButtonModule, TranslatePipe, AgGridAngular],
   templateUrl: './assignments-page.html',
   styleUrl: './assignments-page.scss',
 })

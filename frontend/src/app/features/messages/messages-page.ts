@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MessagesStore } from '../../state/messages.store';
 import { DEMO_MESSAGES } from '../../core/demo-data';
 
@@ -18,7 +18,7 @@ import { DEMO_MESSAGES } from '../../core/demo-data';
     MatFormFieldModule,
     MatInputModule,
     MatListModule,
-    TranslateModule,
+    TranslatePipe,
   ],
   templateUrl: './messages-page.html',
   styleUrl: './messages-page.scss',

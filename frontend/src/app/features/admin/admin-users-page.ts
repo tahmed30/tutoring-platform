@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { catchError, of } from 'rxjs';
 import { UsersApiService } from '../../core/api/users-api.service';
 import { User } from '../../core/models';
@@ -8,7 +8,7 @@ import { DEMO_USERS } from '../../core/demo-data';
 
 @Component({
   selector: 'app-admin-users-page',
-  imports: [MatTableModule, TranslateModule],
+  imports: [MatTableModule, TranslatePipe],
   templateUrl: './admin-users-page.html',
   styleUrl: './admin-users-page.scss',
 })

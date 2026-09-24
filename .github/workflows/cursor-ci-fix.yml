@@ -1,0 +1,150 @@
+# Cursor CLI auto-fix when the CI workflow fails.
+# Restricted autonomy: agent edits files only; git/PR steps are deterministic.
+# Docs: https://cursor.com/docs/cli/github-actions
+name: Cursor CI Fix
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+concurrency:
+  group: cursor-ci-fix-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+jobs:
+  fix-ci:
+    name: Cursor agent CI fix
+    if: >
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout failing ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve PR number
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR=$(gh api \
+            "repos/${{ github.repository }}/commits/${{ github.event.workflow_run.head_sha }}/pulls" \
+            --jq '.[0].number // empty')
+          if [ -z "$PR" ]; then
+            echo "No open PR for this commit; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "number=$PR" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - name: Install Cursor CLI
+        if: steps.pr.outputs.skip != 'true'
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch CI failure logs
+        if: steps.pr.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p /tmp/ci-logs
+          gh run view "${{ github.event.workflow_run.id }}" --log-failed \
+            > /tmp/ci-logs/failed.log 2>&1 || true
+          gh run view "${{ github.event.workflow_run.id }}" --json conclusion,name,url,jobs \
+            > /tmp/ci-logs/run.json
+          head -c 120000 /tmp/ci-logs/failed.log > /tmp/ci-logs/failed-truncated.log
+
+      - name: Run Cursor Agent (file edits only)
+        if: steps.pr.outputs.skip != 'true'
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          if [ -z "$CURSOR_API_KEY" ]; then
+            echo "CURSOR_API_KEY secret is not set. Add it under repo Settings → Secrets."
+            exit 1
+          fi
+          agent -p --force --model composer-2.5 --output-format text \
+            "You are fixing a CI failure for the tutoring-platform monorepo (Angular 22 frontend, NestJS backend, AWS CDK infra).
+
+            IMPORTANT restrictions:
+            - Do NOT create branches, commit, push, or post PR comments.
+            - Do NOT modify .env files, secrets, package-lock.json, or package.json unless a dependency change is strictly required for the build to pass.
+            - Prefer minimal, targeted fixes consistent with existing repo style.
+            - Public open-source packages only (no nscorp / internal registries).
+
+            CI run: ${{ github.event.workflow_run.html_url }}
+            Workflow run id: ${{ github.event.workflow_run.id }}
+            Head SHA: ${{ github.event.workflow_run.head_sha }}
+            PR: #${{ steps.pr.outputs.number }}
+
+            Failed log excerpt is in /tmp/ci-logs/failed-truncated.log
+            Run metadata is in /tmp/ci-logs/run.json
+
+            Analyze the failure, apply the smallest fix in the working tree, and leave a short summary in /tmp/ci-logs/fix-summary.md explaining what you changed and why."
+
+      - name: Publish fix branch (deterministic)
+        if: steps.pr.outputs.skip != 'true'
+        id: publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Agent made no file changes."
+            exit 0
+          fi
+          BRANCH="cursor/ci-fix-${{ github.event.workflow_run.run_id }}"
+          git config user.name "cursor-ci-bot"
+          git config user.email "cursor-ci-bot@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add -A
+          SUMMARY="Automated CI fix from Cursor CLI."
+          if [ -f /tmp/ci-logs/fix-summary.md ]; then
+            SUMMARY=$(head -c 2000 /tmp/ci-logs/fix-summary.md)
+          fi
+          git commit -m "$(cat <<EOF
+          fix(ci): auto-remediate failing workflow via Cursor CLI
+
+          Source run: ${{ github.event.workflow_run.html_url }}
+          EOF
+          )"
+          git push -u origin "$BRANCH" --force-with-lease
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          {
+            echo "summary<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Comment on PR
+        if: steps.pr.outputs.skip != 'true' && steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BODY=$(cat <<EOF
+          ## Cursor CLI CI fix
+
+          A restricted Cursor agent proposed fixes for [CI run #${{ github.event.workflow_run.run_id }}](${{ github.event.workflow_run.html_url }}).
+
+          **Branch:** \`${{ steps.publish.outputs.branch }}\`
+
+          ${{ steps.publish.outputs.summary }}
+
+          Open a PR from that branch (or cherry-pick) after reviewing the diff.
+          EOF
+          )
+          gh pr comment "${{ steps.pr.outputs.number }}" --body "$BODY"
