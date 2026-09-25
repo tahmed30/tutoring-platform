@@ -1,0 +1,39 @@
+# Manual smoke test: Cursor CLI + GitHub Actions auth
+# Does not mutate the repo. Run from Actions tab → "Cursor smoke test" → Run workflow
+name: Cursor smoke test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Verify CURSOR_API_KEY + CLI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check secret is present
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          if [ -z "$CURSOR_API_KEY" ]; then
+            echo "::error::CURSOR_API_KEY is missing. Add it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          echo "CURSOR_API_KEY is set (length ${#CURSOR_API_KEY})."
+
+      - name: Install Cursor CLI
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Agent ping (read-only)
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: |
+          agent -p --output-format text --model composer-2.5 \
+            "Reply with exactly one line: CURSOR_GH_OK. Do not modify any files. Do not run shell commands that change state."
