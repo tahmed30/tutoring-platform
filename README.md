@@ -99,7 +99,7 @@ Details: [infra/README.md](infra/README.md).
 | `FRONTEND_BUCKET_PROD` | deploy.yml | SPA sync target |
 | `CF_DISTRIBUTION_ID_STAGING` | deploy.yml | Invalidation |
 | `CF_DISTRIBUTION_ID_PROD` | deploy.yml | Invalidation |
-| `AWS_REGION` (repo var) | deploy.yml | Default `us-east-1` |
+| `AWS_REGION` (repo var) | deploy.yml | **`us-east-2` (Ohio)** — cheaper US region for this account |
 
 Trust GitHub OIDC (`token.actions.githubusercontent.com`) on the IAM roles. CI runs lint/test/build on PR/push; staging deploys on push to `main`; prod is manual.
 

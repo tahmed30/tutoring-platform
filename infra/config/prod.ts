@@ -2,8 +2,8 @@ import { EnvironmentConfig } from './types';
 
 export const prodConfig: EnvironmentConfig = {
   envName: 'prod',
-  account: process.env.CDK_DEFAULT_ACCOUNT ?? '000000000000',
-  region: process.env.CDK_DEFAULT_REGION ?? 'us-east-1',
+  account: process.env.CDK_DEFAULT_ACCOUNT ?? '971551576728',
+  region: process.env.CDK_DEFAULT_REGION ?? 'us-east-2',
   apiDomain: 'api.tutoring.example.com',
   frontendDomain: 'tutoring.example.com',
   auroraMinCapacity: 1,

@@ -34,7 +34,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
-          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-2' }}
 
       - name: Install Cursor CLI
         run: |
@@ -45,7 +45,7 @@ jobs:
       - name: Collect deploy + AWS context
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
         run: |
           mkdir -p /tmp/aws-diag
           gh run view "${{ github.event.workflow_run.id }}" --log-failed \

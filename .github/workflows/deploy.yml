@@ -46,34 +46,69 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_STAGING }}
-          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-2' }}
 
       - name: Install infra
         working-directory: infra
         run: npm ci
 
-      - name: Build backend image context / CDK deploy
+      - name: CDK bootstrap (idempotent)
         working-directory: infra
-        run: npx cdk deploy --all -c env=staging --require-approval never
+        run: npx cdk bootstrap "aws://${{ secrets.AWS_ACCOUNT_ID_STAGING }}/${{ vars.AWS_REGION || 'us-east-2' }}"
         env:
           CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID_STAGING }}
-          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
+
+      - name: CDK deploy staging
+        working-directory: infra
+        run: npx cdk deploy --all -c env=staging --require-approval never --outputs-file cdk-outputs.json
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID_STAGING }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
+
+      - name: Resolve frontend hosting outputs
+        id: spa
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name TutoringStorage-staging \
+            --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" \
+            --output text)
+          DIST=$(aws cloudformation describe-stacks \
+            --stack-name TutoringStorage-staging \
+            --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionId'].OutputValue" \
+            --output text)
+          DOMAIN=$(aws cloudformation describe-stacks \
+            --stack-name TutoringStorage-staging \
+            --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDomain'].OutputValue" \
+            --output text)
+          API=$(aws cloudformation describe-stacks \
+            --stack-name TutoringCompute-staging \
+            --query "Stacks[0].Outputs[?OutputKey=='ApiBaseUrl'].OutputValue" \
+            --output text)
+          echo "bucket=$BUCKET" >> "$GITHUB_OUTPUT"
+          echo "distribution=$DIST" >> "$GITHUB_OUTPUT"
+          echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
+          echo "api=$API" >> "$GITHUB_OUTPUT"
+          echo "Frontend bucket: $BUCKET"
+          echo "CloudFront: https://$DOMAIN"
+          echo "API: $API"
 
       - name: Build frontend
         working-directory: frontend
         run: |
           npm ci
           npm run build
+        env:
+          NG_APP_API_URL: ${{ steps.spa.outputs.api }}
 
       - name: Sync frontend to S3 + invalidate CloudFront
-        env:
-          FRONTEND_BUCKET: ${{ secrets.FRONTEND_BUCKET_STAGING }}
-          CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID_STAGING }}
         run: |
-          aws s3 sync frontend/dist/web/browser/ s3://$FRONTEND_BUCKET/ --delete
-          if [ -n "$CF_DISTRIBUTION_ID" ]; then
-            aws cloudfront create-invalidation --distribution-id "$CF_DISTRIBUTION_ID" --paths "/*"
-          fi
+          aws s3 sync frontend/dist/web/browser/ "s3://${{ steps.spa.outputs.bucket }}/" --delete
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ steps.spa.outputs.distribution }}" \
+            --paths "/*"
 
   deploy-prod:
     name: Deploy production
@@ -96,18 +131,41 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN_PROD }}
-          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-2' }}
 
       - name: Install infra
         working-directory: infra
         run: npm ci
 
-      - name: CDK deploy production
+      - name: CDK bootstrap (idempotent)
         working-directory: infra
-        run: npx cdk deploy --all -c env=prod --require-approval broadening
+        run: npx cdk bootstrap "aws://${{ secrets.AWS_ACCOUNT_ID_PROD }}/${{ vars.AWS_REGION || 'us-east-2' }}"
         env:
           CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
+
+      - name: CDK deploy production
+        working-directory: infra
+        run: npx cdk deploy --all -c env=prod --require-approval never --outputs-file cdk-outputs.json
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          CDK_DEFAULT_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
+
+      - name: Resolve frontend hosting outputs
+        id: spa
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION || 'us-east-2' }}
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name TutoringStorage-prod \
+            --query "Stacks[0].Outputs[?OutputKey=='FrontendBucketName'].OutputValue" \
+            --output text)
+          DIST=$(aws cloudformation describe-stacks \
+            --stack-name TutoringStorage-prod \
+            --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionId'].OutputValue" \
+            --output text)
+          echo "bucket=$BUCKET" >> "$GITHUB_OUTPUT"
+          echo "distribution=$DIST" >> "$GITHUB_OUTPUT"
 
       - name: Build frontend
         working-directory: frontend
@@ -116,11 +174,8 @@ jobs:
           npm run build
 
       - name: Sync frontend to S3 + invalidate CloudFront
-        env:
-          FRONTEND_BUCKET: ${{ secrets.FRONTEND_BUCKET_PROD }}
-          CF_DISTRIBUTION_ID: ${{ secrets.CF_DISTRIBUTION_ID_PROD }}
         run: |
-          aws s3 sync frontend/dist/web/browser/ s3://$FRONTEND_BUCKET/ --delete
-          if [ -n "$CF_DISTRIBUTION_ID" ]; then
-            aws cloudfront create-invalidation --distribution-id "$CF_DISTRIBUTION_ID" --paths "/*"
-          fi
+          aws s3 sync frontend/dist/web/browser/ "s3://${{ steps.spa.outputs.bucket }}/" --delete
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ steps.spa.outputs.distribution }}" \
+            --paths "/*"
