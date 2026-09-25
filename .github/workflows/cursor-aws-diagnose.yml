@@ -71,7 +71,7 @@ jobs:
             echo "CURSOR_API_KEY secret is not set."
             exit 1
           fi
-          agent -p --force --model composer-2.5 --output-format text \
+          agent -p --force --trust --model composer-2.5 --output-format text \
             "Diagnose a failed AWS deploy for the tutoring-platform (CDK + ECS Fargate + Aurora + S3/CloudFront).
 
             IMPORTANT:

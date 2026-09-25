@@ -35,5 +35,5 @@ jobs:
         env:
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
         run: |
-          agent -p --output-format text --model composer-2.5 \
+          agent -p --trust --output-format text --model composer-2.5 \
             "Reply with exactly one line: CURSOR_GH_OK. Do not modify any files. Do not run shell commands that change state."

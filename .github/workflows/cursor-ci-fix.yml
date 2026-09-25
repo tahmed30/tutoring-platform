@@ -76,7 +76,7 @@ jobs:
             echo "CURSOR_API_KEY secret is not set. Add it under repo Settings → Secrets."
             exit 1
           fi
-          agent -p --force --model composer-2.5 --output-format text \
+          agent -p --force --trust --model composer-2.5 --output-format text \
             "You are fixing a CI failure for the tutoring-platform monorepo (Angular 22 frontend, NestJS backend, AWS CDK infra).
 
             IMPORTANT restrictions:
